@@ -46,4 +46,33 @@ async function createAlbum(req,res) {
             }
         })
 }
-module.exports ={createMusic , createAlbum}
+
+async function gateAllMusics(req,res) {
+    const musics = await musicModel
+    .find()
+    .skip(0)
+    .limit(2)
+    .populate("artist","username email")
+
+    res.status(200).json({
+        message:"Music fatched successfully",
+        musics:musics})
+}
+async function gateAllAlbums(req,res) {
+    const albums = await albumModel.find().select("title artist").populate("artist","username email")
+
+    res.status(200).json({
+        message:"Albums fatched successfully",
+        albums:albums})
+}
+
+async function getAlbumByID(req,res) {
+    const albumID = req.params.albumID
+
+    const album = await albumModel.findById(albumID).populate("artist","username email").populate("musics")
+
+    res.status(200).json({
+        message:"Albums fatched successfully",
+        album:album})
+}
+module.exports ={createMusic , createAlbum ,gateAllMusics , gateAllAlbums,getAlbumByID}
